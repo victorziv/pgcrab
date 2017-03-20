@@ -4,19 +4,20 @@ import psycopg2
 import psycopg2.extras
 from psycopg2 import DatabaseError, IntegrityError
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT, AsIs
-from flask import current_app
+# from flask import current_app
 
 
 class DBAdmin(object):
 
     @staticmethod
-    def create_db(host, port, dbuser, dbname):
+    def create_db(host, port, dbuser, dbpassword, dbname):
         conn = psycopg2.connect(
-                host=host,
-                port=port,
-                dbname='postgres',
-                user=dbuser
-            )
+            host=host,
+            port=port,
+            dbname='postgres',
+            user=dbuser,
+            password=dbpassword
+        )
         conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
         cur = conn.cursor()
         try:
@@ -36,11 +37,11 @@ class DBAdmin(object):
     @staticmethod
     def drop_db(host, port, dbuser, dbname):
         conn = psycopg2.connect(
-                host=host,
-                port=port,
-                dbname='postgres',
-                user=dbuser,
-            )
+            host=host,
+            port=port,
+            dbname='postgres',
+            user=dbuser,
+        )
         conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
         cur = conn.cursor()
         try:
@@ -55,11 +56,11 @@ class DBAdmin(object):
 
     def connectdb(self, host, port, dbname, dbuser):
         self.conn = psycopg2.connect(
-                host=host,
-                port=port,
-                dbname=dbname,
-                user=dbuser
-            )
+            host=host,
+            port=port,
+            dbname=dbname,
+            user=dbuser
+        )
         self.cur = self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         return self.conn, self.cur
     # ___________________________
@@ -250,12 +251,12 @@ class Baseline(object):
 
     # ____________________________
 
-    def create_tables(self):
-        tables = current_app.config['DB_TABLES_BASELINE']
-        for table in tables:
-            self.db.drop_table(table)
-            getattr(self.db, "create_table_%s" % table)()
-            self.db.grant_access_to_table(table)
+#     def create_tables(self):
+#         tables = current_app.config['DB_TABLES_BASELINE']
+#         for table in tables:
+#             self.db.drop_table(table)
+#             getattr(self.db, "create_table_%s" % table)()
+#             self.db.grant_access_to_table(table)
     # ____________________________
 
     def insert_base_version(self):
@@ -271,9 +272,9 @@ class Baseline(object):
         """
 
         params = (
-                '01', '00', '0000',
-                'initial_baseline',
-                datetime.datetime.now()
+            '01', '00', '0000',
+            'initial_baseline',
+            datetime.datetime.now()
         )
 
         try:
