@@ -1,0 +1,14 @@
+*.swp
+*.swo
+*.pyc
+*.cache
+*venv*/
+app.db
+db_repository/
+*.sqlite
+tmp/
+logs/
+*.egg-info
+*.eggs
+dist/
+build/
